@@ -1,0 +1,63 @@
+{
+  "name": "obsidian-gh-discussions",
+  "version": "0.1.0",
+  "description": "A typescript library",
+  "type": "module",
+  "files": ["dist"],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "bunup",
+    "dev": "bunup --watch",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format .",
+    "format:fix": "biome format --write .",
+    "tsc": "tsc --noEmit",
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "test:coverage": "bun test --coverage",
+    "release": "bumpp --commit --push --tag",
+    "publish:ci": "bun publish --access public --no-git-checks",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "obsidian": "^1.8.7"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@commitlint/cli": "^19.8.0",
+    "@commitlint/config-conventional": "^19.8.0",
+    "@types/bun": "^1.2.13",
+    "bumpp": "^10.1.0",
+    "bunup": "^0.8.4",
+    "husky": "^9.1.7",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pricci1/obsidian-gh-discussions.git"
+  },
+  "peerDependencies": {
+    "typescript": ">=4.5.0"
+  },
+  "peerDependenciesMeta": {
+    "typescript": {
+      "optional": true
+    }
+  },
+  "homepage": "https://github.com/pricci1/obsidian-gh-discussions#readme",
+  "bugs": {
+    "url": "https://github.com/pricci1/obsidian-gh-discussions/issues"
+  },
+  "license": "MIT"
+}
