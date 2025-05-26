@@ -1,11 +1,5 @@
-import {
-  type App,
-  Modal,
-  Notice,
-  Plugin,
-  PluginSettingTab,
-  Setting,
-} from "obsidian";
+import { type App, Modal, Notice, Plugin } from "obsidian";
+import { MyPluginSettingTab } from "./settings-tab";
 
 interface MyPluginSettings {
   targetDirectory: string;
@@ -21,7 +15,13 @@ interface NoteFrontmatter {
   frontmatter: Record<string, unknown>;
 }
 
-export default class MyPlugin extends Plugin {
+export type PluginWithSettings = Plugin & {
+  settings: MyPluginSettings;
+  loadSettings: () => Promise<void>;
+  saveSettings: () => Promise<void>;
+};
+
+export default class MyPlugin extends Plugin implements PluginWithSettings {
   settings: MyPluginSettings;
 
   async onload(): Promise<void> {
@@ -150,37 +150,5 @@ class FrontmatterModal extends Modal {
   onClose() {
     const { contentEl } = this;
     contentEl.empty();
-  }
-}
-
-class MyPluginSettingTab extends PluginSettingTab {
-  plugin: MyPlugin;
-
-  constructor(app: App, plugin: MyPlugin) {
-    super(app, plugin);
-    this.plugin = plugin;
-  }
-
-  display(): void {
-    const { containerEl } = this;
-
-    containerEl.empty();
-
-    containerEl.createEl("h2", { text: "Frontmatter Reader Settings" });
-
-    new Setting(containerEl)
-      .setName("Notes Directory")
-      .setDesc(
-        "Specify the directory path to read notes from (e.g., 'folder' or 'folder/subfolder')",
-      )
-      .addText((text) =>
-        text
-          .setPlaceholder("Enter directory path")
-          .setValue(this.plugin.settings.targetDirectory)
-          .onChange(async (value) => {
-            this.plugin.settings.targetDirectory = value;
-            await this.plugin.saveSettings();
-          }),
-      );
   }
 }
