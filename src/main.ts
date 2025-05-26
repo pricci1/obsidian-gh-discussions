@@ -9,7 +9,7 @@ const DEFAULT_SETTINGS: MyPluginSettings = {
   targetDirectory: "",
 };
 
-interface NoteFrontmatter {
+interface NoteInfo {
   filename: string;
   path: string;
   frontmatter: Record<string, unknown>;
@@ -60,8 +60,8 @@ export default class MyPlugin extends Plugin implements PluginWithSettings {
     await this.saveData(this.settings);
   }
 
-  async getNotesFromTargetDirectory(): Promise<NoteFrontmatter[]> {
-    const notes: NoteFrontmatter[] = [];
+  async getNotesFromTargetDirectory(): Promise<NoteInfo[]> {
+    const notes: NoteInfo[] = [];
 
     if (!this.settings.targetDirectory) {
       return notes;
