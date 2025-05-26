@@ -8,11 +8,11 @@ import {
 } from "obsidian";
 
 interface MyPluginSettings {
-  notesDirectory: string;
+  targetDirectory: string;
 }
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
-  notesDirectory: "",
+  targetDirectory: "",
 };
 
 interface NoteFrontmatter {
@@ -60,17 +60,17 @@ export default class MyPlugin extends Plugin {
     await this.saveData(this.settings);
   }
 
-  async getNotesFromDirectory(): Promise<NoteFrontmatter[]> {
+  async getNotesFromTargetDirectory(): Promise<NoteFrontmatter[]> {
     const notes: NoteFrontmatter[] = [];
 
-    if (!this.settings.notesDirectory) {
+    if (!this.settings.targetDirectory) {
       return notes;
     }
 
     const files = this.app.vault.getMarkdownFiles();
-    const targetDir = this.settings.notesDirectory.endsWith("/")
-      ? this.settings.notesDirectory
-      : `${this.settings.notesDirectory}/`;
+    const targetDir = this.settings.targetDirectory.endsWith("/")
+      ? this.settings.targetDirectory
+      : `${this.settings.targetDirectory}/`;
 
     for (const file of files) {
       if (file.path.startsWith(targetDir)) {
@@ -101,7 +101,7 @@ class FrontmatterModal extends Modal {
     const { contentEl } = this;
     contentEl.empty();
 
-    const notes = await this.plugin.getNotesFromDirectory();
+    const notes = await this.plugin.getNotesFromTargetDirectory();
 
     if (notes.length === 0) {
       contentEl.createEl("p", {
@@ -176,9 +176,9 @@ class MyPluginSettingTab extends PluginSettingTab {
       .addText((text) =>
         text
           .setPlaceholder("Enter directory path")
-          .setValue(this.plugin.settings.notesDirectory)
+          .setValue(this.plugin.settings.targetDirectory)
           .onChange(async (value) => {
-            this.plugin.settings.notesDirectory = value;
+            this.plugin.settings.targetDirectory = value;
             await this.plugin.saveSettings();
           }),
       );
