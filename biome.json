@@ -8,13 +8,13 @@
     "rules": {
       "recommended": true
     },
-    "ignore": ["dist", "node_modules"]
+    "ignore": ["dist", "node_modules", "main.js"]
   },
   "formatter": {
     "enabled": true,
     "indentStyle": "space",
     "indentWidth": 2,
-    "ignore": ["dist", "node_modules"]
+    "ignore": ["dist", "node_modules", "main.js"]
   },
   "vcs": {
     "enabled": true,
