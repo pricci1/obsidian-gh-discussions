@@ -1,13 +1,17 @@
-import { Notice, Plugin } from "obsidian";
+import { type App, Notice, Plugin } from "obsidian";
 import { FrontmatterModal } from "./frontmatter-modal";
 import { MyPluginSettingTab } from "./settings-tab";
 
 interface MyPluginSettings {
   targetDirectory: string;
+  githubToken: string;
+  repoUrl: string;
 }
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
   targetDirectory: "",
+  githubToken: "",
+  repoUrl: "",
 };
 
 interface NoteInfo {
