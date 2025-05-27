@@ -20,11 +20,13 @@ export interface NoteStore {
   getNotesFromTargetDirectory(): Promise<NoteInfo[]>;
 }
 
-export type PluginWithSettings = Plugin & {
+interface SettingsStore {
   settings: MyPluginSettings;
   loadSettings: () => Promise<void>;
   saveSettings: () => Promise<void>;
-};
+}
+
+export type PluginWithSettings = Plugin & SettingsStore;
 
 export default class MyPlugin
   extends Plugin
