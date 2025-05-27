@@ -11,6 +11,7 @@ export default defineConfig({
   clean: false,
   dts: false,
   plugins: [report()],
+  noExternal: ["@octokit/core"],
   external: [
     "obsidian",
     "electron",
