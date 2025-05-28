@@ -9,12 +9,14 @@ interface MyPluginSettings {
   targetDirectory: string;
   githubToken: string;
   repoUrl: string;
+  categories: string[][];
 }
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
   targetDirectory: "",
   githubToken: "",
   repoUrl: "",
+  categories: [],
 };
 
 interface NoteInfo {

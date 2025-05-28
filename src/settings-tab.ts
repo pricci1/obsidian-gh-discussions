@@ -1,4 +1,5 @@
 import { type App, PluginSettingTab, Setting } from "obsidian";
+import { CategoriesSettingComponent } from "./categories-setting";
 import type { PluginWithSettings } from "./main";
 
 export class MyPluginSettingTab extends PluginSettingTab {
@@ -57,5 +58,7 @@ export class MyPluginSettingTab extends PluginSettingTab {
             await this.plugin.saveSettings();
           }),
       );
+
+    new CategoriesSettingComponent(containerEl, this.plugin);
   }
 }
