@@ -135,7 +135,11 @@ export default class MyPlugin
 
       new Notice(`Successfully pushed ${file.path} to discussion`);
     } catch (error) {
-      new Notice(`Error pushing note: ${error.message}`);
+      if (error instanceof z.ZodError) {
+        new Notice(`Error pushing note: ${z.prettifyError(error)}`);
+      } else {
+        new Notice("Error pushing note");
+      }
       console.error(error);
     }
   }
