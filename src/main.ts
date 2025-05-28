@@ -4,17 +4,17 @@ import { FrontmatterModal } from "./frontmatter-modal";
 import { GithubClient } from "./github-client";
 import { NoteEditor } from "./note-editor";
 import { NotePusher } from "./note-pusher";
-import { MyPluginSettingTab } from "./settings-tab";
+import { SettingTab } from "./settings-tab";
 import type { PushableNote } from "./types";
 
-interface MyPluginSettings {
+interface PushToGHDPluginSettings {
   targetDirectory: string;
   githubToken: string;
   repoUrl: string;
   categories: string[][];
 }
 
-const DEFAULT_SETTINGS: MyPluginSettings = {
+const DEFAULT_SETTINGS: PushToGHDPluginSettings = {
   targetDirectory: "",
   githubToken: "",
   repoUrl: "",
@@ -32,18 +32,18 @@ export interface NoteStore {
 }
 
 interface SettingsStore {
-  settings: MyPluginSettings;
+  settings: PushToGHDPluginSettings;
   loadSettings: () => Promise<void>;
   saveSettings: () => Promise<void>;
 }
 
 export type PluginWithSettings = Plugin & SettingsStore;
 
-export default class MyPlugin
+export default class PushToGHDPlugin
   extends Plugin
   implements PluginWithSettings, NoteStore
 {
-  settings!: MyPluginSettings;
+  settings!: PushToGHDPluginSettings;
   private notePusher!: NotePusher;
 
   async onload(): Promise<void> {
@@ -64,7 +64,7 @@ export default class MyPlugin
   private setupUI(): void {
     this.addPushToDiscussionRibbonIcon();
     this.addShowFrontmatterCommand();
-    this.addSettingTab(new MyPluginSettingTab(this.app, this));
+    this.addSettingTab(new SettingTab(this.app, this));
   }
 
   private addPushToDiscussionRibbonIcon(): void {

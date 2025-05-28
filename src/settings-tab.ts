@@ -2,7 +2,7 @@ import { type App, PluginSettingTab, Setting } from "obsidian";
 import { CategoriesSettingComponent } from "./categories-setting";
 import type { PluginWithSettings } from "./main";
 
-export class MyPluginSettingTab extends PluginSettingTab {
+export class SettingTab extends PluginSettingTab {
   plugin: PluginWithSettings;
 
   constructor(app: App, plugin: PluginWithSettings) {
