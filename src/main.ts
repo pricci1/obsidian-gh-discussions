@@ -4,6 +4,7 @@ import { GithubClient } from "./github-client";
 import { NoteEditor } from "./note-editor";
 import { NotePusher } from "./note-pusher";
 import { MyPluginSettingTab } from "./settings-tab";
+import type { PushableNote } from "./types";
 
 interface MyPluginSettings {
   targetDirectory: string;
@@ -84,6 +85,22 @@ export default class MyPlugin
     });
   }
 
+  private async fileToPushableNote(file: TFile): Promise<PushableNote> {
+    const frontmatter = this.extractFrontmatter(file);
+    const rawContent = await this.app.vault.read(file);
+    const categoryId = this.settings.categories
+      .find((categoryPair) => categoryPair.at(0) === frontmatter.category)
+      ?.at(1);
+
+    return {
+      filePath: file.path,
+      categoryId,
+      rawContent,
+      title: file.basename,
+      labels: frontmatter.labels ?? [],
+    };
+  }
+
   private async handlePushToDiscussion(): Promise<void> {
     const file = this.app.workspace.activeEditor?.file;
     if (!file) {
@@ -92,16 +109,8 @@ export default class MyPlugin
     }
 
     try {
-      const frontmatter = this.extractFrontmatter(file);
-      const rawContent = await this.app.vault.read(file);
-
-      await this.notePusher.push({
-        filePath: file.path,
-        categoryId: frontmatter.categoryId,
-        rawContent,
-        title: file.basename,
-        labels: frontmatter.labels ?? [],
-      });
+      const pushableNote = await this.fileToPushableNote(file);
+      await this.notePusher.push(pushableNote);
 
       new Notice(`Successfully pushed ${file.path} to discussion`);
     } catch (error) {
