@@ -1,4 +1,5 @@
 import { Notice, Plugin, type TFile } from "obsidian";
+import { z } from "zod/v4";
 import { FrontmatterModal } from "./frontmatter-modal";
 import { GithubClient } from "./github-client";
 import { NoteEditor } from "./note-editor";
@@ -86,18 +87,38 @@ export default class MyPlugin
   }
 
   private async fileToPushableNote(file: TFile): Promise<PushableNote> {
-    const frontmatter = this.extractFrontmatter(file);
+    const CategoryAndLabelSchema = z.object({
+      category: z
+        .string({ error: "Unknown category. Make sure it exists in settings." })
+        .min(1)
+        .transform((category) =>
+          this.settings.categories
+            .find(
+              (categoryPair) =>
+                categoryPair.at(0)?.toLowerCase() === category.toLowerCase(),
+            )
+            ?.at(1),
+        )
+        .pipe(
+          z
+            .string({
+              error: "Unknown category. Make sure it exists in settings.",
+            })
+            .min(1),
+        ),
+      labels: z.array(z.string()).min(1).optional().default([]),
+    });
+    const { category: categoryId, labels } = CategoryAndLabelSchema.parse(
+      this.extractFrontmatter(file),
+    );
     const rawContent = await this.app.vault.read(file);
-    const categoryId = this.settings.categories
-      .find((categoryPair) => categoryPair.at(0) === frontmatter.category)
-      ?.at(1);
 
     return {
       filePath: file.path,
       categoryId,
       rawContent,
       title: file.basename,
-      labels: frontmatter.labels ?? [],
+      labels,
     };
   }
 
