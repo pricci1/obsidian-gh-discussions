@@ -11,7 +11,14 @@ export default defineConfig({
   clean: false,
   dts: false,
   plugins: [report()],
-  noExternal: ["@octokit/core"],
+  noExternal: [
+    "@octokit/core",
+    "zod",
+    "zod/v4",
+    "zod/v4/core",
+    "zod/v4/locales",
+    "zod/v4/locales/en.js",
+  ],
   external: [
     "obsidian",
     "electron",
