@@ -12,7 +12,7 @@ export class CategoriesSettingComponent {
 
   private render(): void {
     const categoriesContainer = this.container.createDiv();
-    categoriesContainer.createEl("h3", { text: "Categories" });
+    categoriesContainer.createEl("h4", { text: "Categories" });
     categoriesContainer.createEl("p", {
       text: "Map category names to GitHub discussion category IDs",
       cls: "setting-item-description",

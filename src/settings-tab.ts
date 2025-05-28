@@ -14,7 +14,6 @@ export class SettingTab extends PluginSettingTab {
     const { containerEl } = this;
 
     containerEl.empty();
-    containerEl.createEl("h2", { text: "Frontmatter Reader Settings" });
 
     new Setting(containerEl)
       .setName("Notes Directory")
