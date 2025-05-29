@@ -107,10 +107,13 @@ export default class PushToGHDPlugin
             .min(1),
         ),
       labels: z.array(z.string()).min(1).optional().default([]),
+      remoteId: z.string().optional(),
     });
-    const { category: categoryId, labels } = CategoryAndLabelSchema.parse(
-      this.extractFrontmatter(file),
-    );
+    const {
+      category: categoryId,
+      labels,
+      remoteId,
+    } = CategoryAndLabelSchema.parse(this.extractFrontmatter(file));
     const rawContent = await this.app.vault.read(file);
 
     return {
@@ -119,6 +122,7 @@ export default class PushToGHDPlugin
       rawContent,
       title: file.basename,
       labels,
+      remoteId,
     };
   }
 

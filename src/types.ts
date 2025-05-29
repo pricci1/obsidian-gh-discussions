@@ -18,4 +18,8 @@ export type RemoteClient = {
   createDiscussion(
     note: Omit<PushableNote, "filePath" | "remoteId">,
   ): Promise<{ id: string; updatedAt: string }>;
+  updateDiscussion(
+    remoteId: NonNullable<PushableNote["remoteId"]>,
+    note: Omit<PushableNote, "filePath" | "remoteId">,
+  ): Promise<{ id: string; updatedAt: string }>;
 };

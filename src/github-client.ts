@@ -1,4 +1,5 @@
 import { Octokit } from "@octokit/core";
+import type { RemoteClient } from "./types";
 
 interface CreateDiscussionParams {
   categoryId: string;
@@ -12,7 +13,7 @@ interface CreateDiscussionResult {
   updatedAt: string;
 }
 
-export class GithubClient {
+export class GithubClient implements RemoteClient {
   private readonly client: Octokit;
   constructor(
     token: string,
@@ -38,6 +39,30 @@ export class GithubClient {
     );
 
     if (labels.length > 0) {
+      await this.attachLabelsToDiscussion(repositoryId, discussion.id, labels);
+    }
+
+    return {
+      id: discussion.id,
+      updatedAt: discussion.updatedAt,
+    };
+  }
+
+  async updateDiscussion(
+    discussionId: string,
+    { categoryId, title, rawContent, labels }: CreateDiscussionParams,
+  ): Promise<CreateDiscussionResult> {
+    const { owner, repo } = this.parseRepoUrl();
+    const repositoryId = await this.getRepositoryId(owner, repo);
+
+    const discussion = await this.updateDiscussionMutation(
+      discussionId,
+      categoryId,
+      title,
+      rawContent,
+    );
+
+    if (labels && labels.length > 0) {
       await this.attachLabelsToDiscussion(repositoryId, discussion.id, labels);
     }
 
@@ -101,6 +126,54 @@ export class GithubClient {
       body,
     });
     return (response as any).createDiscussion.discussion;
+  }
+
+  private async updateDiscussionMutation(
+    discussionId: string,
+    categoryId?: string,
+    title?: string,
+    body?: string,
+  ): Promise<{ id: string; updatedAt: string }> {
+    const variables: Record<string, unknown> = { discussionId };
+    const inputFields: string[] = ["discussionId: $discussionId"];
+
+    if (categoryId !== undefined) {
+      variables.categoryId = categoryId;
+      inputFields.push("categoryId: $categoryId");
+    }
+    if (title !== undefined) {
+      variables.title = title;
+      inputFields.push("title: $title");
+    }
+    if (body !== undefined) {
+      variables.body = body;
+      inputFields.push("body: $body");
+    }
+
+    const mutationVariables = [
+      "$discussionId: ID!",
+      categoryId !== undefined ? "$categoryId: ID" : null,
+      title !== undefined ? "$title: String" : null,
+      body !== undefined ? "$body: String" : null,
+    ]
+      .filter(Boolean)
+      .join(", ");
+
+    const mutation = `
+      mutation(${mutationVariables}) {
+        updateDiscussion(input: {
+          ${inputFields.join(",\n          ")}
+        }) {
+          discussion {
+            id
+            updatedAt
+          }
+        }
+      }
+    `;
+
+    const response = await this.client.graphql(mutation, variables);
+    return (response as any).updateDiscussion.discussion;
   }
 
   private async attachLabelsToDiscussion(
